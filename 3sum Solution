@@ -1,0 +1,85 @@
+Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+
+Note:
+
+The solution set must not contain duplicate triplets.
+
+Example:
+
+Given array nums = [-1, 0, 1, 2, -1, -4],
+
+A solution set is:
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+
+Solution:-
+
+Approach#1: Naive Solution(Brute Force)
+
+In this approach the intuition would be to do as the approach says and return all the possible set of 3 indexes that have values summing up to 0.
+
+Code:Java
+
+public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> triplets = new ArrayList<>();
+        for(int i = 0;i < nums.length;i++){
+            for(int j = i+1;j < nums.length;j++){
+                for(int k = j+1;k < nums.length;k++){
+                    if(nums[i] + nums[j] + nums[k] == 0){
+                        ArrayList<Integer> index = new ArrayList<Integer>();
+                        index.add(i);
+                        index.add(j);
+                        index.add(k);
+                        triplets.add(index);
+                    }
+                }
+            }
+         }
+        return triplets;
+}
+ 
+Time Complexity: O(n^3)
+Space complexity: O(1) apart from the solution set of ans
+
+
+Approach#2: Three Pointers
+
+This approach uses the intuition of the two pointer concept and extends it to three pointers.We first sort the array and then maintain three pointers that are in strictly increasing order(i < j < k). We iterate using the i pointer over the whole array. Since the array is sorted, if the sum is greater than 0, we decrement the k pointer as beyond that only the elements which are larger than the element at kth poisition exist which will make the sum even greater. Similarly we increment j if the sum is less than 0. If the sum is equal to 0 we add the current indexes to the solution list of triplets.
+We also keep a check of duplicate elements as seen in the code below.
+
+Code:Java
+
+public List<List<Integer>> threeSum(int[] nums) {
+	List<List<Integer>> triplets = new ArrayList<>();
+	int len = nums.length;
+	Arrays.sort(nums);
+	for (int i = 0; i < len - 2; i++) {
+		if (i > 0)
+			while (i < len - 2 && nums[i - 1] == nums[i])
+				i++; // to exclude duplicates
+		int j = i + 1;
+		int k = len - 1;
+		while (j < k) {
+			int sum = nums[i] + nums[j] + nums[k];
+			if (sum == 0) {
+				triplets.add(new ArrayList<>(Arrays.asList(nums[i], nums[j], nums[k])));
+				j++;
+				k--;
+				while ((j < k) && (nums[j - 1] == nums[j])) // to exclude duplicates
+					j++;
+				while ((j < k) && (nums[k] == nums[k + 1])) // to exclude duplicates
+					k--;
+			} else if (sum < 0) {
+				j++; // sum too low
+			} else {
+				k--; // sum too high
+			}
+		}
+	}
+	return triplets; 
+}
+    
+Time Complexity: O(n^2)
+Space Complexity: O(1) apart from the solution set
